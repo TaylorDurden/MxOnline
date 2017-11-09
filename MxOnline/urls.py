@@ -23,7 +23,7 @@ from django.views.generic import TemplateView
 
 import xadmin
 
-from users.views import LoginView, RegisterView, ActiveUserView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ResetPwdView
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -31,5 +31,11 @@ urlpatterns = [
     url('^login/$', LoginView.as_view(), name="login"),
     url('^register/$', RegisterView.as_view(), name="register"),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name="user_active")
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name="user_active"),
+    url(r'^forget/$', ForgetPwdView.as_view(), name="forget_pwd"),
+    url(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name="reset"),
+    url(r'^reset_pwd/$', ResetPwdView.as_view(), name="reset_pwd"),
+
+    #课程机构首页
+    url(r'^org_list/$', ResetPwdView.as_view(), name="org_list"),
 ]
