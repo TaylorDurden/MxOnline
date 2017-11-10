@@ -20,10 +20,12 @@ from django.contrib import admin
 
 # 处理静态资源
 from django.views.generic import TemplateView
-
 import xadmin
+from django.views.static import serve
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ResetPwdView
+from organization.views import OrgView
+from MxOnline.settings import MEDIA_ROOT
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -37,5 +39,8 @@ urlpatterns = [
     url(r'^reset_pwd/$', ResetPwdView.as_view(), name="reset_pwd"),
 
     #课程机构首页
-    url(r'^org_list/$', ResetPwdView.as_view(), name="org_list"),
+    url(r'^org_list/$', OrgView.as_view(), name="org_list"),
+
+    #配置上传文件的访问处理函数
+    url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 ]
