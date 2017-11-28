@@ -8,6 +8,14 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/common-less.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/video-js.min.css' %}">
+
+    <style>
+        .video-js .vjs-big-play-button{
+            top: 50%;
+            left: 50%;
+        }
+    </style>
 {% endblock %}
 {% block custom_bread %}
     <section>
@@ -17,7 +25,7 @@
                     <li><a href="index.html">首页</a>></li>
                     <li><a href="{% url 'course:course_list' %}">公开课程</a>></li>
                     <li><a href="{% url 'course:course_detail' course.id %}">课程详情</a>></li>
-                    <li>章节信息</li>
+                    <li>{{ video.name }}</li>
                 </ul>
             </div>
         </div>
@@ -26,31 +34,13 @@
 {% endblock %}
 {% block content %}
     <div id="main">
-    <div class="course-infos">
-        <div class="w pr">
-            <div style="height: 15px" class="path">
-            </div>
-            <div class="hd">
-                <h2 class="l">{{ course.name }}</h2>
-            </div>
-            <div class="statics clearfix">
-                <div class="static-item ">
-                    <span class="meta-value"><strong>{{ course.get_degree_display }}</strong></span>
-                    <span class="meta">难度</span>
-                    <em></em>
-                </div>
-                <div class="static-item static-time">
-                    <span class="meta-value">{{ course.learn_times }}分钟</span>
-                    <span class="meta">时长</span>
-                    <em></em>
-                </div>
-                <div class="static-item">
-                    <span class="meta-value"><strong>{{ course.students }}</strong></span>
-                    <span class="meta">学习人数</span>
-                    <em></em>
-                </div>
-            </div>
-        </div>
+    <div style="width:1136px;height:675px;margin-left: 15px;">
+        <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="1136"
+              poster="http://video-js.zencoder.com/oceans-clip.png"
+              data-setup="{}">
+{#            <source src="http://of66as8gb.bkt.clouddn.com/12.2%20xss%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86%E5%8F%8A%E9%98%B2%E8%8C%83.mp4" type='video/mp4'>#}
+            <source src="{{ video.url }}" type='video/mp4'>
+        </video>
     </div>
     <div class="course-info-main clearfix w has-progress">
 
@@ -76,7 +66,7 @@
                         <ul class="video">
                             {% for video in chapter.get_lesson_video %}
                                 <li>
-                                <a target="_blank" href='{% url 'course:video_play' video.id %}' class="J-media-item studyvideo">{{ video.name }}({{ video.duration }})
+                                <a target="_blank" href='/video/3662' class="J-media-item studyvideo">{{ video.name }}({{ video.duration }})
                                     <i class="study-state"></i>
                                 </a>
                             </li>
@@ -166,41 +156,5 @@
 </div>
 {% endblock %}
 {% block custom_js %}
-    <script type="text/javascript">
-        function add_fav(current_elem, fav_id, fav_type){
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url:"{% url 'org:add_fav' %}",
-                data:{'fav_id':fav_id, 'fav_type':fav_type},
-                async: true,
-                beforeSend:function(xhr, settings){
-                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-                },
-                success: function(data) {
-                    if(data.status == 'fail'){
-                        if(data.msg == '用户未登录'){
-                            window.location.href="/login/";
-                        }else{
-                            alert(data.msg)
-                        }
-
-                    }else if(data.status == 'success'){
-                        current_elem.text(data.msg)
-                    }
-                },
-            });
-        }
-        $(document).ready(function(){
-            $('#jsLeftBtn').on('click', function() {
-                add_fav($(this), {{ course.id }}, 1); // 1 为收藏课程
-            });
-
-            $('#jsRightBtn').on('click', function() {
-                add_fav($(this), {{ course.course_org.id }}, 2); // 2 为收藏课程机构
-            });
-        });
-
-    </script>
-
+    <script src="{% static 'js/video.min.js' %}" type="text/javascript"></script>
 {% endblock %}
